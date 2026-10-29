@@ -1,0 +1,110 @@
+import javafx.application.Application;
+import javafx.event.ActionEvent;
+import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.geometry.Insets;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
+import javafx.stage.Stage;
+import java.io.StringReader;
+
+public class Main extends Application {
+
+    // --- MAIN APPLICATION ENTRY POINT ---
+    @Override
+    public void start(Stage primaryStage) throws Exception {
+        // Embedded FXML Content matching the structure of Step-1
+        String fxmlContent = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
+                "<?import javafx.geometry.Insets?>\n" +
+                "<?import javafx.scene.control.Button?>\n" +
+                "<?import javafx.scene.control.Label?>\n" +
+                "<?import javafx.scene.control.TextField?>\n" +
+                "<?import javafx.scene.layout.VBox?>\n" +
+                "<?import javafx.scene.text.Font?>\n" +
+                "<VBox alignment=\"CENTER\" spacing=\"15.0\" xmlns=\"http://javafx.com\" xmlns:fx=\"http://javafx.com\" fx:controller=\"Main$TipCalculatorController\">\n" +
+                "   <children>\n" +
+                "      <Label text=\"Tip Calculator\">\n" +
+                "         <font>\n" +
+                "            <Font name=\"System Bold\" size=\"20.0\" />\n" +
+                "         </font>\n" +
+                "      </Label>\n" +
+                "      <TextField fx:id=\"billAmountField\" promptText=\"Enter Bill Amount\" />\n" +
+                "      <TextField fx:id=\"tipPercentageField\" promptText=\"Enter Tip Percentage\" />\n" +
+                "      <Button mnemonicParsing=\"false\" onAction=\"#calculateTip\" text=\"Calculate Tip\" maxWidth=\"Infinity\"/>\n" +
+                "      <Button mnemonicParsing=\"false\" onAction=\"#reset\" text=\"Reset\" maxWidth=\"Infinity\"/>\n" +
+                "      <Label fx:id=\"tipAmountLabel\" text=\"Tip Amount: $0.00\">\n" +
+                "         <font>\n" +
+                "            <Font size=\"16.0\" />\n" +
+                "         </font>\n" +
+                "      </Label>\n" +
+                "      <Label fx:id=\"errorMessageLabel\" textFill=\"RED\" wrapText=\"true\" />\n" +
+                "   </children>\n" +
+                "   <padding>\n" +
+                "      <Insets bottom=\"20.0\" left=\"20.0\" right=\"20.0\" top=\"20.0\" />\n" +
+                "   </padding>\n" +
+                "</VBox>";
+
+        // Load the integrated FXML configuration string
+        FXMLLoader loader = new FXMLLoader();
+        Parent root = loader.load(new StringReader(fxmlContent));
+
+        // Display setup
+        primaryStage.setTitle("Tip Calculator App");
+        primaryStage.setScene(new Scene(root, 300, 350));
+        primaryStage.setResizable(false);
+        primaryStage.show();
+    }
+
+    public static void main(String[] args) {
+        launch(args);
+    }
+
+    // --- CONTROLLER CLASS ---
+    public static class TipCalculatorController {
+
+        @FXML
+        private TextField billAmountField;
+
+        @FXML
+        private TextField tipPercentageField;
+
+        @FXML
+        private Label tipAmountLabel;
+
+        @FXML
+        private Label errorMessageLabel;
+
+        @FXML
+        void calculateTip(ActionEvent event) {
+            errorMessageLabel.setText(""); // Clear previous errors
+            
+            try {
+                // Parse inputs
+                double billAmount = Double.parseDouble(billAmountField.getText().trim());
+                double tipPercentage = Double.parseDouble(tipPercentageField.getText().trim());
+
+                // Calculate the final tip metrics
+                double tipAmount = billAmount * (tipPercentage / 100.0);
+
+                // Output format: Tip Amount: $X.XX
+                tipAmountLabel.setText(String.format("Tip Amount: $%.2f", tipAmount));
+
+            } catch (NumberFormatException e) {
+                // Handle non-numeric validation gracefully
+                errorMessageLabel.setText("Error: Invalid input. Please enter numbers.");
+            }
+        }
+
+        @FXML
+        void reset(ActionEvent event) {
+            // Restore initial empty state fields
+            billAmountField.clear();
+            tipPercentageField.clear();
+            tipAmountLabel.setText("Tip Amount: $0.00");
+            errorMessageLabel.setText("");
+        }
+    }
+}
